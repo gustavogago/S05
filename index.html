@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#006db7">
+    <title>App Inatel - Notas, Faltas e Notificacoes</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="workspace">
+      <section class="phone" aria-label="Prototipo mobile do App Inatel">
+        <div class="status-bar" aria-hidden="true">
+          <span>22:25</span>
+          <span class="status-icons">4G Wi-Fi 82%</span>
+        </div>
+
+        <header class="app-bar">
+          <button class="icon-button" type="button" id="menuButton" aria-label="Abrir menu">
+            <span aria-hidden="true">☰</span>
+          </button>
+          <h1 id="screenTitle">Notas e Faltas</h1>
+          <button class="icon-button" type="button" id="searchButton" aria-label="Buscar disciplina">
+            <span aria-hidden="true">⌕</span>
+          </button>
+        </header>
+
+        <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+        <aside class="drawer" id="drawer" aria-label="Menu academico" aria-hidden="true">
+          <div class="drawer-header">
+            <strong>App Inatel</strong>
+            <span>Aluno: Gustavo</span>
+          </div>
+          <button class="drawer-item active" type="button" data-nav="dashboard">
+            <span aria-hidden="true">▦</span>
+            Notas e Faltas
+          </button>
+          <button class="drawer-item" type="button" data-nav="notifications">
+            <span aria-hidden="true">◉</span>
+            Notificacoes
+          </button>
+          <button class="drawer-item" type="button" data-nav="docs">
+            <span aria-hidden="true">□</span>
+            Documentacao
+          </button>
+        </aside>
+
+        <main class="app-content" id="appContent">
+          <section class="permission-panel" id="permissionPanel">
+            <div>
+              <p class="eyebrow">Avisos academicos</p>
+              <h2>Receba lancamentos de notas, faltas e risco de limite.</h2>
+            </div>
+            <button class="primary-button" type="button" id="enableNotifications">
+              Ativar
+            </button>
+          </section>
+
+          <section class="settings-panel" id="settingsPanel" aria-label="Configuracao de notificacoes">
+            <div class="setting-row">
+              <div>
+                <strong>Notas publicadas</strong>
+                <span>Quando uma avaliacao for lancada.</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="gradeToggle" checked>
+                <span></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div>
+                <strong>Faltas lancadas</strong>
+                <span>Quando o professor registrar presenca/falta.</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="absenceToggle" checked>
+                <span></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div>
+                <strong>Risco de limite</strong>
+                <span>Aviso antes de estourar as faltas.</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="riskToggle" checked>
+                <span></span>
+              </label>
+            </div>
+            <label class="threshold-control" for="riskThreshold">
+              <span>Alertar quando restarem ate <strong id="thresholdValue">2</strong> faltas</span>
+              <input type="range" id="riskThreshold" min="1" max="5" value="2">
+            </label>
+          </section>
+
+          <section class="subject-panel" aria-label="Selecao de disciplina">
+            <label for="subjectSelect">Disciplina</label>
+            <select id="subjectSelect"></select>
+          </section>
+
+          <section class="risk-banner" id="riskBanner" role="status"></section>
+
+          <section class="summary-grid" aria-label="Resumo academico">
+            <article class="metric">
+              <span>Faltas</span>
+              <strong id="absenceMetric">0/0</strong>
+              <small id="absenceRemaining">0 restantes</small>
+            </article>
+            <article class="metric">
+              <span>Media</span>
+              <strong id="averageMetric">--</strong>
+              <small id="gradeStatus">Aguardando NP2</small>
+            </article>
+            <article class="metric">
+              <span>Proxima nota</span>
+              <strong id="requiredMetric">--</strong>
+              <small id="requiredLabel">Necessaria</small>
+            </article>
+          </section>
+
+          <section class="progress-panel" aria-label="Progresso de faltas">
+            <div class="panel-title">
+              <h2>Frequencia</h2>
+              <span id="classesMetric">0 aulas</span>
+            </div>
+            <div class="meter" aria-hidden="true">
+              <span id="absenceMeter"></span>
+            </div>
+            <p id="absenceMessage"></p>
+          </section>
+
+          <section class="table-panel" aria-label="Notas por avaliacao">
+            <div class="panel-title">
+              <h2>Notas</h2>
+              <button class="icon-action" type="button" id="simulateGrade" aria-label="Simular nota lancada">
+                +
+              </button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Avaliacao</th>
+                  <th>Nota</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="gradesTable"></tbody>
+            </table>
+          </section>
+
+          <section class="table-panel" aria-label="Faltas por mes">
+            <div class="panel-title">
+              <h2>Faltas</h2>
+              <button class="icon-action" type="button" id="simulateAbsence" aria-label="Simular falta lancada">
+                +
+              </button>
+            </div>
+            <table class="data-table frequency-table">
+              <thead>
+                <tr>
+                  <th>Mes</th>
+                  <th>Pri</th>
+                  <th>Lab</th>
+                  <th>Jus</th>
+                </tr>
+              </thead>
+              <tbody id="frequencyTable"></tbody>
+            </table>
+          </section>
+
+          <section class="launch-panel" id="launchPanel" hidden aria-label="Lancamento simulado">
+            <div class="panel-title">
+              <h2>Registrar nota</h2>
+              <button class="icon-action muted" type="button" id="closeLaunch" aria-label="Fechar lancamento">
+                ×
+              </button>
+            </div>
+            <div class="form-grid">
+              <label for="assessmentSelect">
+                Avaliacao
+                <select id="assessmentSelect"></select>
+              </label>
+              <label for="gradeInput">
+                Nota
+                <input id="gradeInput" type="number" min="0" max="100" value="82">
+              </label>
+            </div>
+            <button class="primary-button full" type="button" id="confirmGrade">
+              Publicar nota
+            </button>
+          </section>
+
+          <section class="feed-panel" aria-label="Ultimas notificacoes">
+            <div class="panel-title">
+              <h2>Ultimos avisos</h2>
+              <button class="text-action" type="button" id="resetDemo">Reiniciar</button>
+            </div>
+            <ol class="notification-feed" id="notificationFeed"></ol>
+          </section>
+        </main>
+
+        <nav class="bottom-nav" aria-label="Navegacao principal">
+          <button class="bottom-item active" type="button" data-nav="dashboard">
+            <span aria-hidden="true">▦</span>
+            <small>Dash</small>
+          </button>
+          <button class="bottom-item" type="button" data-nav="notifications">
+            <span aria-hidden="true">◉</span>
+            <small>Avisos</small>
+          </button>
+          <button class="bottom-item" type="button" data-nav="docs">
+            <span aria-hidden="true">□</span>
+            <small>Docs</small>
+          </button>
+        </nav>
+      </section>
+
+      <section class="documentation" id="documentation" aria-label="Documentacao do projeto">
+        <div class="doc-header">
+          <p class="eyebrow">Interface Homem-Maquina | Inatel</p>
+          <h2>Funcionalidade: notificacoes de notas, faltas e risco de limite</h2>
+          <a id="publishedLink" href="#" aria-disabled="true">Link GitHub Pages: aguardando publicacao</a>
+        </div>
+
+        <article class="doc-section">
+          <h3>User Story</h3>
+          <p>
+            Como aluno do Inatel, quero ativar notificacoes de notas publicadas,
+            faltas lancadas e risco de limite por disciplina, para acompanhar minha
+            situacao academica sem precisar conferir manualmente cada tela do app.
+          </p>
+        </article>
+
+        <article class="doc-section">
+          <h3>Analise da Tarefa</h3>
+          <ol class="task-list">
+            <li><strong>0. Acompanhar situacao academica com alertas.</strong> Plano: 1 &gt; 2 &gt; 3 &gt; 4 &gt; 5.</li>
+            <li><strong>1. Abrir o App Inatel.</strong> O aluno acessa o app autenticado.</li>
+            <li><strong>2. Abrir Notas e Faltas no menu.</strong> A entrada fica visivel no menu academico.</li>
+            <li><strong>3. Ativar notificacoes.</strong> O aluno escolhe notas, faltas e alerta de risco.</li>
+            <li><strong>4. Selecionar disciplina.</strong> O app carrega notas, frequencia e limite.</li>
+            <li><strong>5. Receber feedback.</strong> O sistema exibe toast, feed e notificacao do navegador quando houver lancamento.</li>
+          </ol>
+        </article>
+
+        <article class="doc-section">
+          <h3>Fluxo de Informacao</h3>
+          <div class="class-diagram" aria-label="Diagrama de classes">
+            <div class="class-box">
+              <strong>Aluno</strong>
+              <span>- matricula</span>
+              <span>+ escolherDisciplina()</span>
+            </div>
+            <div class="class-box">
+              <strong>AppInatel</strong>
+              <span>- usuarioLogado</span>
+              <span>+ abrirMenuAcademico()</span>
+            </div>
+            <div class="class-box">
+              <strong>DashboardMateria</strong>
+              <span>- materiaSelecionada</span>
+              <span>+ atualizarResumo()</span>
+            </div>
+            <div class="class-box">
+              <strong>Disciplina</strong>
+              <span>- nome</span>
+              <span>+ consultarNotas()</span>
+            </div>
+            <div class="class-box">
+              <strong>Frequencia</strong>
+              <span>- limiteFaltas</span>
+              <span>+ calcularRestantes()</span>
+            </div>
+            <div class="class-box">
+              <strong>Avaliacao</strong>
+              <span>- tipo</span>
+              <span>+ registrarNota()</span>
+            </div>
+            <div class="class-box emphasis">
+              <strong>PreferenciaNotificacao</strong>
+              <span>- notasAtivas</span>
+              <span>- faltasAtivas</span>
+              <span>- limiteRisco</span>
+            </div>
+            <div class="class-box emphasis">
+              <strong>ServicoNotificacao</strong>
+              <span>+ notificarNota()</span>
+              <span>+ notificarFalta()</span>
+              <span>+ alertarRisco()</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-section">
+          <h3>Wireframes</h3>
+          <div class="wireframes">
+            <div class="wireframe">
+              <span class="wire-top"></span>
+              <span class="wire-line wide"></span>
+              <span class="wire-line"></span>
+              <span class="wire-block"></span>
+              <span class="wire-line short"></span>
+              <small>Dashboard</small>
+            </div>
+            <div class="wireframe">
+              <span class="wire-top"></span>
+              <span class="wire-toggle"></span>
+              <span class="wire-toggle"></span>
+              <span class="wire-toggle"></span>
+              <span class="wire-block small"></span>
+              <small>Configuracao</small>
+            </div>
+            <div class="wireframe">
+              <span class="wire-top alert"></span>
+              <span class="wire-line wide"></span>
+              <span class="wire-block"></span>
+              <span class="wire-line"></span>
+              <small>Feedback</small>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-section assets">
+          <h3>Arquivos-base usados</h3>
+          <a href="Analise_Tarefa_User_Story_Dashboard_App_Inatel_Final%20(1).pdf">User Story e Analise da Tarefa</a>
+          <a href="UML_Dashboard_App_Inatel%20(1).pdf">UML original</a>
+          <a href="wireframe%20(1).pdf">Wireframe original</a>
+        </article>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

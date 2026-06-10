@@ -1,0 +1,8 @@
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.yml text eol=lf
+*.pdf binary
+*.jpeg binary
+*.jpg binary
+*.png binary
