@@ -4,143 +4,119 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#006db7">
-    <title>App Inatel - Notas, Faltas e Notificacoes</title>
+    <title>Dashboard da Matéria - App Inatel</title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <div class="workspace">
-      <section class="phone" aria-label="Prototipo mobile do App Inatel">
+    <main class="phone-shell" aria-label="Tela do App Inatel">
+      <section class="phone">
         <div class="status-bar" aria-hidden="true">
-          <span>22:25</span>
-          <span class="status-icons">4G Wi-Fi 82%</span>
+          <span>9:41</span>
+          <span>▮▮▮  Wi-Fi  ▰</span>
         </div>
 
-        <header class="app-bar">
-          <button class="icon-button" type="button" id="menuButton" aria-label="Abrir menu">
-            <span aria-hidden="true">☰</span>
-          </button>
-          <h1 id="screenTitle">Notas e Faltas</h1>
-          <button class="icon-button" type="button" id="searchButton" aria-label="Buscar disciplina">
-            <span aria-hidden="true">⌕</span>
-          </button>
+        <header class="app-header">
+          <button class="header-icon" type="button" aria-label="Abrir menu">☰</button>
+          <h1>Dashboard da Matéria</h1>
+          <button class="header-icon bell-icon" type="button" id="notificationButton" aria-label="Notificações"></button>
         </header>
 
-        <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
-        <aside class="drawer" id="drawer" aria-label="Menu academico" aria-hidden="true">
-          <div class="drawer-header">
-            <strong>App Inatel</strong>
-            <span>Aluno: Gustavo</span>
-          </div>
-          <button class="drawer-item active" type="button" data-nav="dashboard">
-            <span aria-hidden="true">▦</span>
-            Notas e Faltas
-          </button>
-          <button class="drawer-item" type="button" data-nav="notifications">
-            <span aria-hidden="true">◉</span>
-            Notificacoes
-          </button>
-          <button class="drawer-item" type="button" data-nav="docs">
-            <span aria-hidden="true">□</span>
-            Documentacao
-          </button>
-        </aside>
-
-        <main class="app-content" id="appContent">
-          <section class="permission-panel" id="permissionPanel">
-            <div>
-              <p class="eyebrow">Avisos academicos</p>
-              <h2>Receba lancamentos de notas, faltas e risco de limite.</h2>
-            </div>
-            <button class="primary-button" type="button" id="enableNotifications">
-              Ativar
-            </button>
-          </section>
-
-          <section class="settings-panel" id="settingsPanel" aria-label="Configuracao de notificacoes">
-            <div class="setting-row">
-              <div>
-                <strong>Notas publicadas</strong>
-                <span>Quando uma avaliacao for lancada.</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="gradeToggle" checked>
-                <span></span>
-              </label>
-            </div>
-            <div class="setting-row">
-              <div>
-                <strong>Faltas lancadas</strong>
-                <span>Quando o professor registrar presenca/falta.</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="absenceToggle" checked>
-                <span></span>
-              </label>
-            </div>
-            <div class="setting-row">
-              <div>
-                <strong>Risco de limite</strong>
-                <span>Aviso antes de estourar as faltas.</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="riskToggle" checked>
-                <span></span>
-              </label>
-            </div>
-            <label class="threshold-control" for="riskThreshold">
-              <span>Alertar quando restarem ate <strong id="thresholdValue">2</strong> faltas</span>
-              <input type="range" id="riskThreshold" min="1" max="5" value="2">
-            </label>
-          </section>
-
-          <section class="subject-panel" aria-label="Selecao de disciplina">
-            <label for="subjectSelect">Disciplina</label>
+        <div class="app-scroll">
+          <section class="subject-card" aria-label="Selecionar matéria">
+            <label for="subjectSelect">Matéria</label>
             <select id="subjectSelect"></select>
           </section>
 
-          <section class="risk-banner" id="riskBanner" role="status"></section>
-
-          <section class="summary-grid" aria-label="Resumo academico">
-            <article class="metric">
-              <span>Faltas</span>
-              <strong id="absenceMetric">0/0</strong>
-              <small id="absenceRemaining">0 restantes</small>
-            </article>
-            <article class="metric">
-              <span>Media</span>
-              <strong id="averageMetric">--</strong>
-              <small id="gradeStatus">Aguardando NP2</small>
-            </article>
-            <article class="metric">
-              <span>Proxima nota</span>
-              <strong id="requiredMetric">--</strong>
-              <small id="requiredLabel">Necessaria</small>
-            </article>
+          <section class="notification-card" aria-label="Configurar notificações">
+            <div class="notification-copy">
+              <span>Notificações acadêmicas</span>
+              <strong id="notificationStatus">Desativadas</strong>
+            </div>
+            <button class="primary-button" type="button" id="enableNotifications">Ativar</button>
           </section>
 
-          <section class="progress-panel" aria-label="Progresso de faltas">
-            <div class="panel-title">
-              <h2>Frequencia</h2>
-              <span id="classesMetric">0 aulas</span>
-            </div>
-            <div class="meter" aria-hidden="true">
-              <span id="absenceMeter"></span>
-            </div>
-            <p id="absenceMessage"></p>
+          <section class="settings-card" id="settingsCard" aria-label="Preferências de notificações" hidden>
+            <label class="setting">
+              <span>
+                <strong>Nota lançada</strong>
+                <small>Avisar quando uma avaliação sair.</small>
+              </span>
+              <input type="checkbox" id="gradeToggle" checked>
+            </label>
+            <label class="setting">
+              <span>
+                <strong>Falta lançada</strong>
+                <small>Avisar quando o professor registrar falta.</small>
+              </span>
+              <input type="checkbox" id="absenceToggle" checked>
+            </label>
+            <label class="setting">
+              <span>
+                <strong>Risco de limite</strong>
+                <small>Alertar antes de estourar o limite.</small>
+              </span>
+              <input type="checkbox" id="riskToggle" checked>
+            </label>
           </section>
 
-          <section class="table-panel" aria-label="Notas por avaliacao">
-            <div class="panel-title">
+          <section class="risk-strip" id="riskStrip" role="status"></section>
+
+          <section class="dashboard-card absence-dashboard" aria-label="Dashboard de faltas">
+            <div class="section-title">
+              <h2>Faltas</h2>
+              <span id="absenceRatio">0/0</span>
+            </div>
+
+            <div class="absence-visual">
+              <div class="donut" id="absenceDonut" role="img" aria-label="Gráfico de faltas">
+                <div>
+                  <strong id="classesCount">0 aulas</strong>
+                  <span id="absenceCount">0 faltas</span>
+                </div>
+              </div>
+              <dl class="legend">
+                <div>
+                  <dt class="legend-box total"></dt>
+                  <dd id="totalLegend">Total de aulas</dd>
+                </div>
+                <div>
+                  <dt class="legend-box used"></dt>
+                  <dd id="usedLegend">Aulas faltadas</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="limit-area">
+              <div class="limit-title">
+                <strong>Limite de faltas</strong>
+                <span id="limitLabel">Limite</span>
+              </div>
+              <div class="limit-track" aria-hidden="true">
+                <span id="usedBar"></span>
+                <i id="limitMarker"></i>
+              </div>
+              <div class="limit-scale">
+                <span>0</span>
+                <span id="midScale">0</span>
+                <span id="limitScale">0</span>
+              </div>
+              <p id="absenceMessage"></p>
+            </div>
+          </section>
+
+          <section class="dashboard-card grades-dashboard" aria-label="Dashboard de notas">
+            <div class="section-title">
               <h2>Notas</h2>
-              <button class="icon-action" type="button" id="simulateGrade" aria-label="Simular nota lancada">
-                +
-              </button>
+              <span id="averageBadge">Média parcial</span>
             </div>
-            <table class="data-table">
+
+            <div class="bar-chart" id="barChart" aria-label="Gráfico de notas"></div>
+
+            <table class="grade-table">
               <thead>
                 <tr>
-                  <th>Avaliacao</th>
+                  <th>Avaliação</th>
                   <th>Nota</th>
                   <th>Status</th>
                 </tr>
@@ -149,189 +125,27 @@
             </table>
           </section>
 
-          <section class="table-panel" aria-label="Faltas por mes">
-            <div class="panel-title">
-              <h2>Faltas</h2>
-              <button class="icon-action" type="button" id="simulateAbsence" aria-label="Simular falta lancada">
-                +
-              </button>
+          <section class="dashboard-card target-dashboard" aria-label="Nota necessária">
+            <div>
+              <span>Próxima meta</span>
+              <strong id="requiredGrade">--</strong>
+              <small id="requiredCaption">Aguardando avaliação</small>
             </div>
-            <table class="data-table frequency-table">
-              <thead>
-                <tr>
-                  <th>Mes</th>
-                  <th>Pri</th>
-                  <th>Lab</th>
-                  <th>Jus</th>
-                </tr>
-              </thead>
-              <tbody id="frequencyTable"></tbody>
-            </table>
+            <p id="gradeMessage"></p>
           </section>
 
-          <section class="launch-panel" id="launchPanel" hidden aria-label="Lancamento simulado">
-            <div class="panel-title">
-              <h2>Registrar nota</h2>
-              <button class="icon-action muted" type="button" id="closeLaunch" aria-label="Fechar lancamento">
-                ×
-              </button>
+          <section class="dashboard-card feed-dashboard" aria-label="Avisos recentes">
+            <div class="section-title">
+              <h2>Avisos recentes</h2>
+              <span id="feedCount">0</span>
             </div>
-            <div class="form-grid">
-              <label for="assessmentSelect">
-                Avaliacao
-                <select id="assessmentSelect"></select>
-              </label>
-              <label for="gradeInput">
-                Nota
-                <input id="gradeInput" type="number" min="0" max="100" value="82">
-              </label>
-            </div>
-            <button class="primary-button full" type="button" id="confirmGrade">
-              Publicar nota
-            </button>
+            <ol id="notificationFeed" class="notification-feed"></ol>
           </section>
-
-          <section class="feed-panel" aria-label="Ultimas notificacoes">
-            <div class="panel-title">
-              <h2>Ultimos avisos</h2>
-              <button class="text-action" type="button" id="resetDemo">Reiniciar</button>
-            </div>
-            <ol class="notification-feed" id="notificationFeed"></ol>
-          </section>
-        </main>
-
-        <nav class="bottom-nav" aria-label="Navegacao principal">
-          <button class="bottom-item active" type="button" data-nav="dashboard">
-            <span aria-hidden="true">▦</span>
-            <small>Dash</small>
-          </button>
-          <button class="bottom-item" type="button" data-nav="notifications">
-            <span aria-hidden="true">◉</span>
-            <small>Avisos</small>
-          </button>
-          <button class="bottom-item" type="button" data-nav="docs">
-            <span aria-hidden="true">□</span>
-            <small>Docs</small>
-          </button>
-        </nav>
-      </section>
-
-      <section class="documentation" id="documentation" aria-label="Documentacao do projeto">
-        <div class="doc-header">
-          <p class="eyebrow">Interface Homem-Maquina | Inatel</p>
-          <h2>Funcionalidade: notificacoes de notas, faltas e risco de limite</h2>
-          <a id="publishedLink" href="#" aria-disabled="true">Link GitHub Pages: aguardando publicacao</a>
         </div>
-
-        <article class="doc-section">
-          <h3>User Story</h3>
-          <p>
-            Como aluno do Inatel, quero ativar notificacoes de notas publicadas,
-            faltas lancadas e risco de limite por disciplina, para acompanhar minha
-            situacao academica sem precisar conferir manualmente cada tela do app.
-          </p>
-        </article>
-
-        <article class="doc-section">
-          <h3>Analise da Tarefa</h3>
-          <ol class="task-list">
-            <li><strong>0. Acompanhar situacao academica com alertas.</strong> Plano: 1 &gt; 2 &gt; 3 &gt; 4 &gt; 5.</li>
-            <li><strong>1. Abrir o App Inatel.</strong> O aluno acessa o app autenticado.</li>
-            <li><strong>2. Abrir Notas e Faltas no menu.</strong> A entrada fica visivel no menu academico.</li>
-            <li><strong>3. Ativar notificacoes.</strong> O aluno escolhe notas, faltas e alerta de risco.</li>
-            <li><strong>4. Selecionar disciplina.</strong> O app carrega notas, frequencia e limite.</li>
-            <li><strong>5. Receber feedback.</strong> O sistema exibe toast, feed e notificacao do navegador quando houver lancamento.</li>
-          </ol>
-        </article>
-
-        <article class="doc-section">
-          <h3>Fluxo de Informacao</h3>
-          <div class="class-diagram" aria-label="Diagrama de classes">
-            <div class="class-box">
-              <strong>Aluno</strong>
-              <span>- matricula</span>
-              <span>+ escolherDisciplina()</span>
-            </div>
-            <div class="class-box">
-              <strong>AppInatel</strong>
-              <span>- usuarioLogado</span>
-              <span>+ abrirMenuAcademico()</span>
-            </div>
-            <div class="class-box">
-              <strong>DashboardMateria</strong>
-              <span>- materiaSelecionada</span>
-              <span>+ atualizarResumo()</span>
-            </div>
-            <div class="class-box">
-              <strong>Disciplina</strong>
-              <span>- nome</span>
-              <span>+ consultarNotas()</span>
-            </div>
-            <div class="class-box">
-              <strong>Frequencia</strong>
-              <span>- limiteFaltas</span>
-              <span>+ calcularRestantes()</span>
-            </div>
-            <div class="class-box">
-              <strong>Avaliacao</strong>
-              <span>- tipo</span>
-              <span>+ registrarNota()</span>
-            </div>
-            <div class="class-box emphasis">
-              <strong>PreferenciaNotificacao</strong>
-              <span>- notasAtivas</span>
-              <span>- faltasAtivas</span>
-              <span>- limiteRisco</span>
-            </div>
-            <div class="class-box emphasis">
-              <strong>ServicoNotificacao</strong>
-              <span>+ notificarNota()</span>
-              <span>+ notificarFalta()</span>
-              <span>+ alertarRisco()</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="doc-section">
-          <h3>Wireframes</h3>
-          <div class="wireframes">
-            <div class="wireframe">
-              <span class="wire-top"></span>
-              <span class="wire-line wide"></span>
-              <span class="wire-line"></span>
-              <span class="wire-block"></span>
-              <span class="wire-line short"></span>
-              <small>Dashboard</small>
-            </div>
-            <div class="wireframe">
-              <span class="wire-top"></span>
-              <span class="wire-toggle"></span>
-              <span class="wire-toggle"></span>
-              <span class="wire-toggle"></span>
-              <span class="wire-block small"></span>
-              <small>Configuracao</small>
-            </div>
-            <div class="wireframe">
-              <span class="wire-top alert"></span>
-              <span class="wire-line wide"></span>
-              <span class="wire-block"></span>
-              <span class="wire-line"></span>
-              <small>Feedback</small>
-            </div>
-          </div>
-        </article>
-
-        <article class="doc-section assets">
-          <h3>Arquivos-base usados</h3>
-          <a href="Analise_Tarefa_User_Story_Dashboard_App_Inatel_Final%20(1).pdf">User Story e Analise da Tarefa</a>
-          <a href="UML_Dashboard_App_Inatel%20(1).pdf">UML original</a>
-          <a href="wireframe%20(1).pdf">Wireframe original</a>
-        </article>
       </section>
-    </div>
+    </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
     <script src="script.js"></script>
   </body>
 </html>
