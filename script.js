@@ -78,6 +78,8 @@ const state = loadState();
 const els = {
   subjectSelect: document.querySelector("#subjectSelect"),
   notificationButton: document.querySelector("#notificationButton"),
+  notificationModal: document.querySelector("#notificationModal"),
+  closeNotificationModal: document.querySelector("#closeNotificationModal"),
   notificationStatus: document.querySelector("#notificationStatus"),
   enableNotifications: document.querySelector("#enableNotifications"),
   settingsCard: document.querySelector("#settingsCard"),
@@ -128,9 +130,13 @@ function init() {
   });
 
   els.enableNotifications.addEventListener("click", enableNotifications);
-  els.notificationButton.addEventListener("click", () => {
-    els.settingsCard.hidden = !els.settingsCard.hidden;
-    showToast("Preferências de notificações abertas.");
+  els.notificationButton.addEventListener("click", openNotificationModal);
+  els.closeNotificationModal.addEventListener("click", closeNotificationModal);
+  els.notificationModal.addEventListener("click", (event) => {
+    if (event.target === els.notificationModal) closeNotificationModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !els.notificationModal.hidden) closeNotificationModal();
   });
 
   [els.gradeToggle, els.absenceToggle, els.riskToggle].forEach((input) => {
@@ -148,6 +154,10 @@ function init() {
 
 async function enableNotifications() {
   state.notifications.enabled = true;
+  saveState();
+  syncControls();
+  render();
+  showToast("Notificações ativadas para notas, faltas e risco de limite.");
 
   if ("Notification" in window && Notification.permission === "default") {
     try {
@@ -156,10 +166,16 @@ async function enableNotifications() {
       console.warn("Permissão de notificação não concluída.", error);
     }
   }
+}
 
-  saveState();
-  syncControls();
-  showToast("Notificações ativadas para notas, faltas e risco de limite.");
+function openNotificationModal() {
+  els.notificationModal.hidden = false;
+  els.closeNotificationModal.focus();
+}
+
+function closeNotificationModal() {
+  els.notificationModal.hidden = true;
+  els.notificationButton.focus();
 }
 
 function render() {
@@ -268,7 +284,6 @@ function syncControls() {
   els.notificationStatus.textContent = state.notifications.enabled ? "Ativadas" : "Desativadas";
   els.enableNotifications.textContent = state.notifications.enabled ? "Ativo" : "Ativar";
   els.enableNotifications.disabled = state.notifications.enabled;
-  els.settingsCard.hidden = !state.notifications.enabled;
   els.gradeToggle.checked = state.notifications.grade;
   els.absenceToggle.checked = state.notifications.absence;
   els.riskToggle.checked = state.notifications.risk;

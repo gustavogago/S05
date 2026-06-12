@@ -28,38 +28,6 @@
             <select id="subjectSelect"></select>
           </section>
 
-          <section class="notification-card" aria-label="Configurar notificações">
-            <div class="notification-copy">
-              <span>Notificações acadêmicas</span>
-              <strong id="notificationStatus">Desativadas</strong>
-            </div>
-            <button class="primary-button" type="button" id="enableNotifications">Ativar</button>
-          </section>
-
-          <section class="settings-card" id="settingsCard" aria-label="Preferências de notificações" hidden>
-            <label class="setting">
-              <span>
-                <strong>Nota lançada</strong>
-                <small>Avisar quando uma avaliação sair.</small>
-              </span>
-              <input type="checkbox" id="gradeToggle" checked>
-            </label>
-            <label class="setting">
-              <span>
-                <strong>Falta lançada</strong>
-                <small>Avisar quando o professor registrar falta.</small>
-              </span>
-              <input type="checkbox" id="absenceToggle" checked>
-            </label>
-            <label class="setting">
-              <span>
-                <strong>Risco de limite</strong>
-                <small>Alertar antes de estourar o limite.</small>
-              </span>
-              <input type="checkbox" id="riskToggle" checked>
-            </label>
-          </section>
-
           <section class="risk-strip" id="riskStrip" role="status"></section>
 
           <section class="dashboard-card absence-dashboard" aria-label="Dashboard de faltas">
@@ -144,6 +112,52 @@
         </div>
       </section>
     </main>
+
+    <div class="modal-backdrop" id="notificationModal" hidden>
+      <section class="notification-modal" role="dialog" aria-modal="true" aria-labelledby="notificationModalTitle">
+        <header class="modal-header">
+          <div>
+            <span>App Inatel</span>
+            <h2 id="notificationModalTitle">Notificações acadêmicas</h2>
+          </div>
+          <button class="modal-close" type="button" id="closeNotificationModal" aria-label="Fechar notificações">×</button>
+        </header>
+
+        <div class="modal-status">
+          <div>
+            <span>Status</span>
+            <strong id="notificationStatus">Desativadas</strong>
+          </div>
+          <button class="primary-button" type="button" id="enableNotifications">Ativar</button>
+        </div>
+
+        <div class="notification-options" id="settingsCard" aria-label="Preferências de notificações">
+          <label class="setting">
+            <span>
+              <strong>Nota lançada</strong>
+              <small>Avisar quando uma avaliação sair.</small>
+            </span>
+            <input type="checkbox" id="gradeToggle" checked>
+          </label>
+          <label class="setting">
+            <span>
+              <strong>Falta lançada</strong>
+              <small>Avisar quando o professor registrar falta.</small>
+            </span>
+            <input type="checkbox" id="absenceToggle" checked>
+          </label>
+          <label class="setting">
+            <span>
+              <strong>Risco de limite</strong>
+              <small>Alertar antes de estourar o limite.</small>
+            </span>
+            <input type="checkbox" id="riskToggle" checked>
+          </label>
+        </div>
+
+        <p class="modal-note">As preferências filtram os avisos exibidos no feed e simulam as notificações que o aluno receberia no app.</p>
+      </section>
+    </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="script.js"></script>
