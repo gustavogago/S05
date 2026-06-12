@@ -191,9 +191,15 @@ button {
   background: #005a97;
 }
 
-.primary-button:disabled {
-  cursor: default;
-  background: var(--success);
+.primary-button.secondary {
+  background: #e7eef6;
+  color: var(--blue);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.primary-button.secondary:hover,
+.primary-button.secondary:focus-visible {
+  background: #dce8f3;
 }
 
 .modal-backdrop[hidden] {

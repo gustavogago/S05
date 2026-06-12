@@ -129,7 +129,7 @@ function init() {
     render();
   });
 
-  els.enableNotifications.addEventListener("click", enableNotifications);
+  els.enableNotifications.addEventListener("click", toggleNotifications);
   els.notificationButton.addEventListener("click", openNotificationModal);
   els.closeNotificationModal.addEventListener("click", closeNotificationModal);
   els.notificationModal.addEventListener("click", (event) => {
@@ -152,14 +152,16 @@ function init() {
   render();
 }
 
-async function enableNotifications() {
-  state.notifications.enabled = true;
+async function toggleNotifications() {
+  state.notifications.enabled = !state.notifications.enabled;
   saveState();
   syncControls();
   render();
-  showToast("Notificações ativadas para notas, faltas e risco de limite.");
+  showToast(state.notifications.enabled
+    ? "Notificações ativadas para notas, faltas e risco de limite."
+    : "Notificações desativadas.");
 
-  if ("Notification" in window && Notification.permission === "default") {
+  if (state.notifications.enabled && "Notification" in window && Notification.permission === "default") {
     try {
       await Notification.requestPermission();
     } catch (error) {
@@ -282,8 +284,8 @@ function renderFeed(subject) {
 
 function syncControls() {
   els.notificationStatus.textContent = state.notifications.enabled ? "Ativadas" : "Desativadas";
-  els.enableNotifications.textContent = state.notifications.enabled ? "Ativo" : "Ativar";
-  els.enableNotifications.disabled = state.notifications.enabled;
+  els.enableNotifications.textContent = state.notifications.enabled ? "Desativar" : "Ativar";
+  els.enableNotifications.classList.toggle("secondary", state.notifications.enabled);
   els.gradeToggle.checked = state.notifications.grade;
   els.absenceToggle.checked = state.notifications.absence;
   els.riskToggle.checked = state.notifications.risk;
