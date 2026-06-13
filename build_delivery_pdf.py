@@ -144,74 +144,163 @@ def class_box(c, x, y, w, h, title, fields, methods, accent=BLUE):
     c.setFillColor(accent)
     c.rect(x, y + h - 5, w, 5, fill=1, stroke=0)
     c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 9)
+    c.setFont("Helvetica-Bold", 8.4)
     c.drawString(x + 8, y + h - 18, title)
-    c.setFont("Helvetica", 7.6)
+    c.setFont("Helvetica", 7.1)
     c.setFillColor(MUTED)
-    line_y = y + h - 32
+    line_y = y + h - 31
     for field in fields:
         c.drawString(x + 8, line_y, field)
-        line_y -= 10
+        line_y -= 8.5
     c.setFillColor(BLUE)
     for method in methods:
         c.drawString(x + 8, line_y, method)
-        line_y -= 10
+        line_y -= 8.5
 
 
 def page4(c):
-    clear(c, 42, 55, 640, 280)
+    clear(c, 38, 32, 648, 304)
     heading(c, "Fluxo de Informação (Diagrama de Classes)", 42, 328)
     boxes = [
-        (42, 236, "Aluno", ["- matrícula", "- nome"], ["+ escolherMateria()"], BLUE),
-        (188, 236, "DashboardMateria", ["- matériaAtual", "- statusAcadêmico"], ["+ atualizarDashboard()"], BLUE),
-        (334, 236, "Disciplina", ["- nome", "- professor"], ["+ consultarNotas()", "+ consultarFrequência()"], BLUE),
-        (480, 236, "PreferênciaNotificação", ["- notaAtiva", "- faltaAtiva", "- riscoAtivo"], ["+ alterarPreferência()"], WARN),
-        (42, 126, "Frequência", ["- aulas", "- faltas", "- limite"], ["+ calcularRestantes()"], BLUE),
-        (188, 126, "Avaliação", ["- tipo", "- nota", "- lançada"], ["+ registrarNota()"], BLUE),
-        (334, 126, "CalculadoraAcadêmica", ["- médiaAprovação = 60"], ["+ calcularNotaNecessária()", "+ verificarRiscoFalta()"], BLUE),
-        (480, 126, "ServiçoNotificação", ["- canais", "- mensagens"], ["+ avisarNota()", "+ avisarFalta()", "+ avisarRisco()"], WARN),
+        (42, 229, "Aluno", ["- matrícula", "- nome"], ["+ escolherMateria()", "+ configurarAvisos()"], BLUE),
+        (267, 229, "DashboardMateria", ["- disciplinaAtual", "- resumoStatus"], ["+ carregarDados()", "+ exibirIndicadores()"], BLUE),
+        (492, 229, "Disciplina", ["- código", "- nome", "- professor"], ["+ obterNotas()", "+ obterFrequência()"], BLUE),
+        (42, 148, "PreferênciaNotificação", ["- notaAtiva", "- faltaAtiva", "- riscoAtivo"], ["+ ativar()", "+ desativar()"], WARN),
+        (267, 148, "ServiçoNotificação", ["- preferências", "- feedAvisos"], ["+ filtrarAvisos()", "+ exibirAviso()"], WARN),
+        (492, 148, "EventoAcadêmico", ["- tipoEvento", "- mensagem", "- data"], ["+ gerarAviso()"], WARN),
+        (42, 67, "Frequência", ["- aulasMinistradas", "- faltas", "- limite"], ["+ calcularRestantes()"], BLUE),
+        (267, 67, "Avaliação", ["- tipo", "- nota", "- lançadaEm"], ["+ exibirStatus()"], BLUE),
+        (492, 67, "CalculadoraAcadêmica", ["- médiaAprovação = 60", "- limiteFaltas"], ["+ calcularNP2()", "+ verificarRisco()"], BLUE),
     ]
-    for x, y, title, fields, methods, accent in boxes:
-        class_box(c, x, y, 126, 84, title, fields, methods, accent)
     c.setStrokeColor(MUTED)
     c.setLineWidth(1)
-    for x1, y1, x2, y2 in [(168, 278, 188, 278), (314, 278, 334, 278), (460, 278, 480, 278), (397, 236, 397, 210), (251, 236, 251, 210), (105, 236, 105, 210), (460, 168, 480, 168)]:
+    for x1, y1, x2, y2 in [
+        (216, 263, 267, 263),
+        (441, 263, 492, 263),
+        (129, 229, 129, 216),
+        (129, 216, 129, 148),
+        (441, 182, 492, 182),
+        (579, 216, 579, 148),
+        (354, 229, 354, 135),
+        (354, 135, 129, 135),
+        (354, 135, 354, 67),
+        (354, 135, 579, 135),
+        (579, 135, 579, 67),
+    ]:
         c.line(x1, y1, x2, y2)
+    for x, y, title, fields, methods, accent in boxes:
+        class_box(c, x, y, 174, 68, title, fields, methods, accent)
     c.setFillColor(MUTED)
-    c.setFont("Helvetica", 9)
-    c.drawString(42, 88, "Regra: faltas restantes = limite - faltas. Se restarem 2 ou menos, o aviso de risco é exibido.")
-    c.drawString(42, 74, "Regra: com NP1 = 70, a dashboard calcula NP2 necessária = 50 para média final 60.")
+    c.setFont("Helvetica", 8)
+    c.drawString(42, 45, "Validação: o aluno não registra nota/falta; ele consulta Avaliação/Frequência, altera preferências e recebe EventoAcadêmico como aviso.")
+    c.drawString(42, 33, "Regras: faltas restantes = limite - faltas; com NP1 = 70, a dashboard calcula NP2 necessária = 50 para média 60.")
 
 
-def draw_phone_wire(c, x, y, title, alert=False):
+def wire_text(c, x, y, text, size=6.4, color=MUTED, bold=False):
+    c.setFillColor(color)
+    c.setFont("Helvetica-Bold" if bold else "Helvetica", size)
+    c.drawString(x, y, text)
+
+
+def draw_phone_frame(c, x, y, title):
     c.setFillColor(colors.white)
     c.setStrokeColor(INK)
-    c.roundRect(x, y, 150, 230, 20, fill=1, stroke=1)
+    c.roundRect(x, y, 156, 242, 20, fill=1, stroke=1)
     c.setFillColor(BLUE)
-    c.rect(x + 1, y + 190, 148, 25, fill=1, stroke=0)
-    c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 8)
-    c.drawCentredString(x + 75, y + 174, title)
+    c.rect(x + 1, y + 205, 154, 24, fill=1, stroke=0)
+    wire_text(c, x + 14, y + 212, "Inatel", 7.2, colors.white, True)
+    c.setFillColor(colors.white)
+    c.circle(x + 136, y + 217, 4, fill=1, stroke=0)
+    wire_text(c, x + 12, y - 12, title, 7, MUTED, True)
+
+
+def draw_dashboard_wire(c, x, y):
+    draw_phone_frame(c, x, y, "1. Dashboard da matéria")
+    wire_text(c, x + 14, y + 190, "Matéria selecionada", 6.5, INK, True)
     c.setStrokeColor(LINE)
-    c.roundRect(x + 14, y + 150, 122, 26, 4, fill=0, stroke=1)
-    c.roundRect(x + 14, y + 75, 122, 66, 4, fill=0, stroke=1)
-    c.roundRect(x + 14, y + 30, 122, 34, 4, fill=0, stroke=1)
-    c.setFillColor(WARN if alert else BLUE)
-    c.rect(x + 24, y + 88, 22, 42, fill=1, stroke=0)
-    c.rect(x + 54, y + 108, 22, 22, fill=1, stroke=0)
-    c.rect(x + 84, y + 96, 22, 34, fill=1, stroke=0)
-    c.setFillColor(MUTED)
-    c.setFont("Helvetica", 7)
-    c.drawCentredString(x + 75, y + 12, title)
+    c.roundRect(x + 14, y + 174, 128, 13, 3, fill=0, stroke=1)
+    wire_text(c, x + 20, y + 178, "S05 - IHC", 5.8)
+    c.setFillColor(colors.HexColor("#fff4e6"))
+    c.roundRect(x + 14, y + 147, 128, 18, 4, fill=1, stroke=0)
+    wire_text(c, x + 20, y + 153, "Alerta: restam 2 faltas", 5.8, WARN, True)
+    c.setStrokeColor(LINE)
+    c.setFillColor(colors.white)
+    c.roundRect(x + 14, y + 86, 60, 52, 5, fill=1, stroke=1)
+    c.roundRect(x + 82, y + 86, 60, 52, 5, fill=1, stroke=1)
+    wire_text(c, x + 20, y + 124, "Faltas", 5.8, INK, True)
+    c.setFillColor(WARN)
+    c.circle(x + 44, y + 106, 12, fill=0, stroke=1)
+    wire_text(c, x + 35, y + 103, "10/12", 5.2, WARN, True)
+    wire_text(c, x + 88, y + 124, "Notas", 5.8, INK, True)
+    c.setFillColor(BLUE)
+    c.rect(x + 92, y + 98, 9, 22, fill=1, stroke=0)
+    c.rect(x + 106, y + 106, 9, 14, fill=1, stroke=0)
+    c.rect(x + 120, y + 94, 9, 26, fill=1, stroke=0)
+    c.setStrokeColor(LINE)
+    c.roundRect(x + 14, y + 45, 128, 26, 5, fill=0, stroke=1)
+    wire_text(c, x + 20, y + 58, "NP2 necessária: 50", 6, INK, True)
+
+
+def draw_modal_wire(c, x, y):
+    draw_phone_frame(c, x, y, "2. Popup de notificações")
+    c.setFillColor(colors.HexColor("#f3f4f6"))
+    c.roundRect(x + 14, y + 170, 128, 16, 3, fill=1, stroke=0)
+    c.roundRect(x + 14, y + 132, 128, 26, 4, fill=1, stroke=0)
+    c.roundRect(x + 14, y + 92, 128, 26, 4, fill=1, stroke=0)
+    c.roundRect(x + 14, y + 52, 128, 26, 4, fill=1, stroke=0)
+    c.setFillColor(colors.Color(0.07, 0.12, 0.2, alpha=0.22))
+    c.roundRect(x + 1, y + 1, 154, 228, 20, fill=1, stroke=0)
+    c.setFillColor(colors.white)
+    c.setStrokeColor(INK)
+    c.roundRect(x + 22, y + 55, 112, 134, 7, fill=1, stroke=1)
+    wire_text(c, x + 34, y + 174, "Notificações", 7, INK, True)
+    wire_text(c, x + 34, y + 158, "Status: Ativadas", 5.8)
+    c.setFillColor(BLUE)
+    c.roundRect(x + 84, y + 151, 38, 13, 4, fill=1, stroke=0)
+    wire_text(c, x + 93, y + 155, "Desativar", 4.9, colors.white, True)
+    for i, label in enumerate(["Nova nota", "Nova falta", "Risco de falta"]):
+        row_y = y + 126 - i * 25
+        c.setStrokeColor(LINE)
+        c.line(x + 34, row_y - 6, x + 122, row_y - 6)
+        c.setFillColor(WARN if i == 2 else BLUE)
+        c.circle(x + 40, row_y, 4, fill=1, stroke=0)
+        wire_text(c, x + 50, row_y - 2, label, 5.9, INK)
+
+
+def draw_feedback_wire(c, x, y):
+    draw_phone_frame(c, x, y, "3. Feedback e decisão")
+    c.setFillColor(colors.HexColor("#fff4e6"))
+    c.roundRect(x + 14, y + 172, 128, 25, 5, fill=1, stroke=0)
+    wire_text(c, x + 22, y + 185, "Risco de faltas", 6.1, WARN, True)
+    wire_text(c, x + 22, y + 176, "Revise presença nas próximas aulas", 4.9, WARN)
+    c.setStrokeColor(LINE)
+    c.setFillColor(colors.white)
+    c.roundRect(x + 14, y + 112, 128, 46, 5, fill=1, stroke=1)
+    wire_text(c, x + 22, y + 143, "Avisos recentes", 6.1, INK, True)
+    wire_text(c, x + 22, y + 130, "Nota de NP1 lançada: 70", 5.4)
+    wire_text(c, x + 22, y + 118, "Falta registrada em S05", 5.4)
+    c.roundRect(x + 14, y + 55, 128, 42, 5, fill=1, stroke=1)
+    wire_text(c, x + 22, y + 82, "Próxima ação", 6.1, INK, True)
+    wire_text(c, x + 22, y + 70, "Consultar faltas e planejar presença", 5.2)
+    c.setFillColor(BLUE)
+    c.roundRect(x + 22, y + 58, 64, 12, 4, fill=1, stroke=0)
+    wire_text(c, x + 31, y + 61.5, "Abrir matéria", 4.8, colors.white, True)
 
 
 def page5(c):
-    clear(c, 52, 80, 620, 245)
+    clear(c, 42, 35, 642, 300)
     heading(c, "Wireframes", 52, 320)
-    paragraph(c, "A sequência representa o percurso do aluno: abrir a dashboard, ativar notificações e receber feedback de risco/notas/faltas.", 52, 294, 96, 11, 15, MUTED)
-    draw_phone_wire(c, 72, 45, "Dashboard")
-    draw_phone_wire(c, 285, 45, "Configuração")
-    draw_phone_wire(c, 498, 45, "Feedback", alert=True)
+    paragraph(c, "Fluxo de baixa fidelidade alinhado à tela final: consulta da matéria, popup de notificações e feedback visual quando houver risco ou novo aviso.", 52, 294, 98, 10, 14, MUTED)
+    draw_dashboard_wire(c, 58, 34)
+    draw_modal_wire(c, 282, 34)
+    draw_feedback_wire(c, 506, 34)
+    c.setStrokeColor(MUTED)
+    c.setFillColor(MUTED)
+    c.setFont("Helvetica-Bold", 8)
+    c.line(222, 156, 260, 156)
+    c.drawString(232, 162, "abre")
+    c.line(446, 156, 484, 156)
+    c.drawString(454, 162, "avisa")
 
 
 def make_overlay(page_number):
