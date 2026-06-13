@@ -1,7 +1,7 @@
 from io import BytesIO
 from pathlib import Path
 
-from pypdf import PdfReader, PdfWriter
+from pypdf import PdfReader, PdfWriter, Transformation
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import landscape
 from reportlab.lib.utils import ImageReader
@@ -12,6 +12,10 @@ ROOT = Path(__file__).parent
 TEMPLATE = ROOT / "Exemplo de Formato de Entrega.pdf"
 OUTPUT = ROOT / "Entrega_S05_App_Inatel_Notificacoes.pdf"
 SCREENSHOT = Path.home() / "AppData" / "Local" / "Temp" / "inatel-dashboard-final-v2.png"
+ASSET_DIR = ROOT / "delivery_assets"
+CLASS_DIAGRAM_IMAGE = ASSET_DIR / "class-diagram.png"
+POPUP_WIREFRAME_IMAGE = ASSET_DIR / "popup-wireframe.png"
+DASHBOARD_WIREFRAME_PDF = ROOT / "wireframe (1).pdf"
 PAGE_SIZE = landscape((405, 720))
 WIDTH, HEIGHT = PAGE_SIZE
 BLUE = colors.HexColor("#006db7")
@@ -65,6 +69,17 @@ def clear(c, x, y, w, h):
     c.setFillColor(colors.white)
     c.setStrokeColor(colors.white)
     c.rect(x, y, w, h, fill=1, stroke=0)
+
+
+def draw_image_fit(c, image_path, x, y, w, h):
+    image = ImageReader(str(image_path))
+    iw, ih = image.getSize()
+    scale = min(w / iw, h / ih)
+    draw_w = iw * scale
+    draw_h = ih * scale
+    draw_x = x + (w - draw_w) / 2
+    draw_y = y + (h - draw_h) / 2
+    c.drawImage(image, draw_x, draw_y, width=draw_w, height=draw_h, mask="auto")
 
 
 def page1(c):
@@ -159,41 +174,13 @@ def class_box(c, x, y, w, h, title, fields, methods, accent=BLUE):
 
 
 def page4(c):
-    clear(c, 38, 32, 648, 304)
-    heading(c, "Fluxo de Informação (Diagrama de Classes)", 42, 328)
-    boxes = [
-        (42, 229, "Aluno", ["- matrícula", "- nome"], ["+ escolherMateria()", "+ configurarAvisos()"], BLUE),
-        (267, 229, "DashboardMateria", ["- disciplinaAtual", "- resumoStatus"], ["+ carregarDados()", "+ exibirIndicadores()"], BLUE),
-        (492, 229, "Disciplina", ["- código", "- nome", "- professor"], ["+ obterNotas()", "+ obterFrequência()"], BLUE),
-        (42, 148, "PreferênciaNotificação", ["- notaAtiva", "- faltaAtiva", "- riscoAtivo"], ["+ ativar()", "+ desativar()"], WARN),
-        (267, 148, "ServiçoNotificação", ["- preferências", "- feedAvisos"], ["+ filtrarAvisos()", "+ exibirAviso()"], WARN),
-        (492, 148, "EventoAcadêmico", ["- tipoEvento", "- mensagem", "- data"], ["+ gerarAviso()"], WARN),
-        (42, 67, "Frequência", ["- aulasMinistradas", "- faltas", "- limite"], ["+ calcularRestantes()"], BLUE),
-        (267, 67, "Avaliação", ["- tipo", "- nota", "- lançadaEm"], ["+ exibirStatus()"], BLUE),
-        (492, 67, "CalculadoraAcadêmica", ["- médiaAprovação = 60", "- limiteFaltas"], ["+ calcularNP2()", "+ verificarRisco()"], BLUE),
-    ]
-    c.setStrokeColor(MUTED)
-    c.setLineWidth(1)
-    for x1, y1, x2, y2 in [
-        (216, 263, 267, 263),
-        (441, 263, 492, 263),
-        (129, 229, 129, 216),
-        (129, 216, 129, 148),
-        (441, 182, 492, 182),
-        (579, 216, 579, 148),
-        (354, 229, 354, 135),
-        (354, 135, 129, 135),
-        (354, 135, 354, 67),
-        (354, 135, 579, 135),
-        (579, 135, 579, 67),
-    ]:
-        c.line(x1, y1, x2, y2)
-    for x, y, title, fields, methods, accent in boxes:
-        class_box(c, x, y, 174, 68, title, fields, methods, accent)
+    clear(c, 30, 18, 660, 355)
+    heading(c, "Fluxo de Informação (Diagrama de Classes)", 42, 370)
+    if CLASS_DIAGRAM_IMAGE.exists():
+        draw_image_fit(c, CLASS_DIAGRAM_IMAGE, 36, 35, 648, 318)
     c.setFillColor(MUTED)
     c.setFont("Helvetica", 8)
-    c.drawString(42, 45, "Validação: o aluno não registra nota/falta; ele consulta Avaliação/Frequência, altera preferências e recebe EventoAcadêmico como aviso.")
-    c.drawString(42, 33, "Regras: faltas restantes = limite - faltas; com NP1 = 70, a dashboard calcula NP2 necessária = 50 para média 60.")
+    c.drawString(42, 22, "Diagrama UML simplificado: o aluno consulta dados acadêmicos, configura preferências e recebe notificações.")
 
 
 def wire_text(c, x, y, text, size=6.4, color=MUTED, bold=False):
@@ -290,17 +277,17 @@ def draw_feedback_wire(c, x, y):
 def page5(c):
     clear(c, 42, 35, 642, 300)
     heading(c, "Wireframes", 52, 320)
-    paragraph(c, "Fluxo de baixa fidelidade alinhado à tela final: consulta da matéria, popup de notificações e feedback visual quando houver risco ou novo aviso.", 52, 294, 98, 10, 14, MUTED)
-    draw_dashboard_wire(c, 58, 34)
-    draw_modal_wire(c, 282, 34)
-    draw_feedback_wire(c, 506, 34)
-    c.setStrokeColor(MUTED)
+    paragraph(c, "A entrega usa dois wireframes: a dashboard principal da matéria e o popup de notificações acadêmicas.", 52, 294, 98, 10, 14, MUTED)
+    c.setStrokeColor(LINE)
+    c.setFillColor(colors.white)
+    c.roundRect(58, 47, 192, 228, 6, fill=1, stroke=1)
+    c.roundRect(286, 47, 376, 228, 6, fill=1, stroke=1)
+    if POPUP_WIREFRAME_IMAGE.exists():
+        draw_image_fit(c, POPUP_WIREFRAME_IMAGE, 296, 58, 356, 206)
     c.setFillColor(MUTED)
     c.setFont("Helvetica-Bold", 8)
-    c.line(222, 156, 260, 156)
-    c.drawString(232, 162, "abre")
-    c.line(446, 156, 484, 156)
-    c.drawString(454, 162, "avisa")
+    c.drawCentredString(154, 34, "1. Dashboard da matéria")
+    c.drawCentredString(474, 34, "2. Popup de notificações")
 
 
 def make_overlay(page_number):
@@ -312,11 +299,28 @@ def make_overlay(page_number):
     return PdfReader(buffer).pages[0]
 
 
+def merge_pdf_page_fit(target_page, source_path, x, y, w, h):
+    if not source_path.exists():
+        return
+    source_page = PdfReader(str(source_path)).pages[0]
+    source_w = float(source_page.mediabox.width)
+    source_h = float(source_page.mediabox.height)
+    scale = min(w / source_w, h / source_h)
+    draw_w = source_w * scale
+    draw_h = source_h * scale
+    tx = x + (w - draw_w) / 2
+    ty = y + (h - draw_h) / 2
+    transform = Transformation().scale(scale).translate(tx, ty)
+    target_page.merge_transformed_page(source_page, transform, expand=False)
+
+
 def main():
     reader = PdfReader(str(TEMPLATE))
     writer = PdfWriter()
     for i, page in enumerate(reader.pages):
         page.merge_page(make_overlay(i))
+        if i == 4:
+            merge_pdf_page_fit(page, DASHBOARD_WIREFRAME_PDF, 64, 53, 180, 216)
         writer.add_page(page)
     with OUTPUT.open("wb") as f:
         writer.write(f)
